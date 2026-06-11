@@ -46,7 +46,7 @@ const deleteBlog = async (req, res) => {
     return res.status(403).json({ error: "Not authorized" });
 
   await blog.deleteOne();
-  // Also clean up orphaned comments
+  //  delete comments of that blog
   await Comment.deleteMany({ blogId: req.params.id });
 
   return res.json({ message: "Blog deleted" });
