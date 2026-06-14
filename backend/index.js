@@ -15,12 +15,22 @@ const commentRoutes = require("./routes/commentRoutes");
 const app = express();
 const PORT = process.env.PORT || 8000;
 
-//Security
-app.use(helmet());
+
 app.use(cors({
   origin: "http://localhost:5173",   // React dev server
   credentials: true,                 // allow cookies cross-origin
 }));
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+}));
+
+
+// Static files
+//allow frontend to access backend static image url 
+app.use("/uploads", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  next();
+}, express.static(path.resolve("./public/uploads")));
 
 //Parsers 
 app.use(express.json());
@@ -30,8 +40,6 @@ app.use(cookieParser());
 // Auth (attach req.user on every request) 
 app.use(attachUser);
 
-// Static files
-app.use(express.static(path.resolve("./public")));
 
 //API Routes 
 app.use("/api/auth", authRoutes);

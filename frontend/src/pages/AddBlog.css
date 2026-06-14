@@ -1,0 +1,65 @@
+.addblog-wrap {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem 5rem;
+}
+
+.addblog-title {
+  font-family: var(--ff-display);
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 2rem;
+}
+
+.addblog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.4rem;
+}
+
+/* reuse .field, .field input, .btn-submit from Auth.css */
+/* override textarea */
+.addblog-form textarea {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.95rem;
+  color: var(--text);
+  font-family: var(--ff-body);
+  resize: vertical;
+  outline: none;
+  line-height: 1.7;
+  transition: border-color 0.2s;
+}
+
+.addblog-form textarea::placeholder { color: var(--muted); }
+.addblog-form textarea:focus { border-color: var(--accent); }
+
+/* file input */
+.file-input {
+  background: var(--surface) !important;
+  border: 1px dashed var(--border) !important;
+  border-radius: 6px !important;
+  padding: 0.65rem 0.85rem !important;
+  color: var(--muted) !important;
+  cursor: pointer;
+}
+
+.file-input::-webkit-file-upload-button {
+  background: var(--accent);
+  color: var(--white);
+  border: none;
+  border-radius: 4px;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-right: 0.75rem;
+}
+
+.file-name {
+  font-size: 0.8rem;
+  color: var(--muted);
+}

@@ -19,7 +19,7 @@ const signin = async (req, res) => {
 
   const token = await User.matchPasswordAndGenerateToken(email, password);
   return res
-    .cookie("token", token, { httpOnly: true })
+    .cookie("token", token, { httpOnly: true ,sameSite:"lax"})
     .json({ message: "Signed in successfully" });
 };
 

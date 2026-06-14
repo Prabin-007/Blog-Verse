@@ -5,4 +5,5 @@ const api = axios.create({
   withCredentials: true,
 });
 
+export const BASE_URL = "http://localhost:3000";
 export default api;
