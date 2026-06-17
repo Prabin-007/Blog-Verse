@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import { BASE_URL } from "../utils/axios";
 import Navbar from "../components/Navbar";
 import "./BlogDetail.css";
 
@@ -16,23 +17,38 @@ const formatDate = (iso) =>
 export default function BlogDetail() {
   const { id } = useParams();
   const { user } = useContext(AuthContext);
-
+  const navigate=useNavigate();
   const [blog, setBlog] = useState(null);
   const [comments, setComments] = useState([]);
   const [content, setContent] = useState("");
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-
   useEffect(() => {
-    fetch(`/api/blogs/${id}`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((data) => {
-        setBlog(data.blog);
-        setComments(data.comments);
-      })
-      .finally(() => setLoading(false));
-  }, [id]);
+  async function fetchBlog() {
+    try {
+      const res = await fetch(`/api/blogs/${id}`, {
+        credentials: "include",
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        throw (data.error);
+      }
+
+      setBlog(data.blog);
+      setComments(data.comments);
+    } catch (error) {
+      console.log('fetchblog wala error',error);
+      setError(error);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  fetchBlog();
+}, [id]);
 
   const handleComment = async (e) => {
     e.preventDefault();
@@ -45,12 +61,36 @@ export default function BlogDetail() {
         credentials: "include",
         body: JSON.stringify({ content }),
       });
+      
+      if (!res.ok) {
+        setError(data.error || "Something went wrong");
+        return;
+      }
       const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
+
       setComments((prev) => [data.comment, ...prev]);
       setContent("");
     } catch {
       setError("Failed to post comment.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+  const handleDeleteBlog = async(e)=>{
+    e.preventDefault();
+    try {
+      const res = await fetch(`/api/blogs/${id}`, {
+        method: "DELETE",
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw (error);
+      }
+      navigate("/");
+    }
+    catch(error) {
+      setError(error||"Failed to delete post.");
     } finally {
       setSubmitting(false);
     }
@@ -62,7 +102,12 @@ export default function BlogDetail() {
       <div className="loader-wrap"><div className="loader" /></div>
     </div>
   );
-
+  if(error) return (
+    <div className="page">
+      <Navbar />
+      <div className="not-found">{error}</div>
+    </div>
+  );
   if (!blog) return (
     <div className="page">
       <Navbar />
@@ -78,7 +123,7 @@ export default function BlogDetail() {
         {/* Cover image */}
         {blog.coverImageURL && (
           <div className="blog-cover-wrap">
-            <img src={blog.coverImageURL} alt={blog.title} className="blog-cover" />
+            <img src={`${BASE_URL}${blog.coverImageURL}`} alt={blog.title} className="blog-cover" />
           </div>
         )}
 
@@ -86,10 +131,14 @@ export default function BlogDetail() {
         <div className="blog-header">
           <h1 className="blog-title">{blog.title}</h1>
           <div className="blog-meta">
-            <Avatar name={blog.createdBy?.fullName} url={blog.createdBy?.profileImageURL} />
+            <Avatar name={blog.createdBy?.fullName} url={`${BASE_URL}${blog.createdBy?.profileImageURL}`} />
+            
             <span className="meta-name">{blog.createdBy?.fullName}</span>
             <span className="meta-dot">·</span>
             <span className="meta-date">{formatDate(blog.createdAt)}</span>
+            <div className="delete-blog">
+              <button className="delete-blog-button" onClick={handleDeleteBlog}>delete</button>
+            </div>
           </div>
         </div>
 

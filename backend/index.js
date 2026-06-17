@@ -31,6 +31,12 @@ app.use("/uploads", (req, res, next) => {
   res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
   next();
 }, express.static(path.resolve("./public/uploads")));
+//for profile pic
+app.use("/images", (req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "http://localhost:5173");
+  next();
+}, express.static(path.resolve("./public/images")));
+
 
 //Parsers 
 app.use(express.json());

@@ -14,7 +14,8 @@ const formatDate = (iso) =>
   new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
 
 const Avatar = ({ name, url }) => {
-  if (url) return <img src={url} alt={name} className="avatar-img" />;
+  
+  if (url) return <img src={`${BASE_URL}${url}`} alt={name} className="avatar-img" />;
   const initials = (name || "?").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   return <span className="avatar-initials">{initials}</span>;
 };
@@ -24,6 +25,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    
     getBlogs()
       .then(setBlogs)
       .catch(console.error)

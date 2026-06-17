@@ -11,7 +11,7 @@ const {
 const router = Router();
 
 router.get("/",       getAllBlogs);
-router.get("/:id",    getBlogById);
+router.get("/:id",    requireAuth,getBlogById);
 router.post("/",      requireAuth, upload.single("coverImage"), createBlog);
 router.delete("/:id", requireAuth, deleteBlog);
 
