@@ -5,10 +5,10 @@ import "./Auth.css";
 
 export default function SignUp() {
   const navigate = useNavigate();
-  const [form, setForm] = useState({ fullName: "", email: "", password: "" });
+  const [form, setForm] = useState({ fullName: "", email: "", password: ""});
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
+  const [profileImage,setProfileImage]=useState(null);
   const handleChange = (e) =>
     setForm((p) => ({ ...p, [e.target.name]: e.target.value }));
 
@@ -16,15 +16,22 @@ export default function SignUp() {
     e.preventDefault();
     setError("");
     setLoading(true);
+
     try {
+      const fd = new FormData();
+      fd.append("fullName", form.fullName);
+      fd.append("email", form.email);
+      fd.append("password", form.password);
+      if (profileImage) fd.append("profileImage", profileImage);
+
       const res = await fetch("/api/auth/signup", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        credentials: "include",
+        body: fd,
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
-      navigate("/signin");
+      navigate(`/blog/${data.blog._id}`);
     } catch {
       setError("Something went wrong. Try again.");
     } finally {
@@ -81,6 +88,19 @@ export default function SignUp() {
                 required
               />
             </div>
+            <div className="field">
+            <label htmlFor="profileImage">Profile Picture</label>
+            <input
+              type="file"
+              id="coverImage"
+              accept="image/*"
+              onChange={(e) => setProfileImage(e.target.files[0])}
+              className="file-input"
+            />
+            {profileImage && (
+              <span className="file-name">{profileImage.name}</span>
+            )}
+          </div>
 
             <button type="submit" className="btn-submit" disabled={loading}>
               {loading ? "Creating account…" : "Create account"}
