@@ -190,3 +190,70 @@
   transition: background 0.2s;
   white-space: nowrap;
 }
+
+/* ── Blog actions (like, summarize, grammar-fix, edit) ── */
+.blog-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin-top: 1rem;
+}
+
+.like-btn,
+.ai-btn,
+.edit-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 6px;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  font-family: var(--ff-body);
+  cursor: pointer;
+  transition: border-color 0.2s, color 0.2s;
+}
+
+.like-btn:hover,
+.ai-btn:hover:not(:disabled),
+.edit-btn:hover {
+  border-color: var(--accent);
+}
+
+.like-btn.liked {
+  color: #ff5b79;
+  border-color: #ff5b79;
+}
+
+.ai-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.ai-summary-box {
+  margin-top: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text);
+}
+
+.ai-summary-box strong {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--accent);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 600px) {
+  .blog-actions { gap: 0.5rem; }
+  .like-btn, .ai-btn, .edit-btn {
+    flex: 1 1 auto;
+    text-align: center;
+    font-size: 0.8rem;
+    padding: 0.55rem 0.7rem;
+  }
+}

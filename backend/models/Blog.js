@@ -6,6 +6,7 @@ const blogSchema = new Schema(
     body:          { type: String, required: true },
     coverImageURL: { type: String },
     createdBy:     { type: Schema.Types.ObjectId, ref: "User", required: true },
+    likes:         [{ type: Schema.Types.ObjectId, ref: "User" }],
   },
   { timestamps: true }
 );

@@ -52,4 +52,22 @@ const deleteBlog = async (req, res) => {
   return res.json({ message: "Blog deleted" });
 };
 
-module.exports = { getAllBlogs, getBlogById, createBlog, deleteBlog };
+// Toggle like/unlike on a blog for the logged-in user
+const toggleLike = async (req, res) => {
+  const blog = await Blog.findById(req.params.id);
+  if (!blog) return res.status(404).json({ error: "Blog not found" });
+
+  const userId = req.user._id.toString();
+  const alreadyLiked = blog.likes.some((id) => id.toString() === userId);
+
+  if (alreadyLiked) {
+    blog.likes = blog.likes.filter((id) => id.toString() !== userId);
+  } else {
+    blog.likes.push(req.user._id);
+  }
+
+  await blog.save();
+  return res.json({ liked: !alreadyLiked, likesCount: blog.likes.length });
+};
+
+module.exports = { getAllBlogs, getBlogById, createBlog, deleteBlog, toggleLike };

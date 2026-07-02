@@ -24,6 +24,11 @@ export default function BlogDetail() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [liked, setLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
+  const [summary, setSummary] = useState("");
+  const [summarizing, setSummarizing] = useState(false);
+  const [fixingGrammar, setFixingGrammar] = useState(false);
   useEffect(() => {
   async function fetchBlog() {
     try {
@@ -39,6 +44,8 @@ export default function BlogDetail() {
 
       setBlog(data.blog);
       setComments(data.comments);
+      setLikesCount(data.blog.likes?.length || 0);
+      if (user) setLiked(data.blog.likes?.some((uid) => uid === user._id) || false);
     } catch (error) {
       console.log('fetchblog wala error',error);
       setError(error);
@@ -76,6 +83,57 @@ export default function BlogDetail() {
       setSubmitting(false);
     }
   };
+  const handleLike = async () => {
+    if (!user) { navigate("/signin"); return; }
+    try {
+      const res = await fetch(`/api/blogs/${id}/like`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) return;
+      setLiked(data.liked);
+      setLikesCount(data.likesCount);
+    } catch {
+      // silently ignore — non-critical action
+    }
+  };
+
+  const handleSummarize = async () => {
+    setSummarizing(true);
+    try {
+      const res = await fetch(`/api/ai/summarize/${id}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Failed to summarize"); return; }
+      setSummary(data.summary);
+    } catch {
+      setError("Failed to summarize blog.");
+    } finally {
+      setSummarizing(false);
+    }
+  };
+
+  const handleGrammarFix = async () => {
+    setFixingGrammar(true);
+    try {
+      const res = await fetch(`/api/ai/grammar-fix/${id}`, {
+        method: "POST",
+        credentials: "include",
+      });
+      const data = await res.json();
+      if (!res.ok) { setError(data.error || "Failed to fix grammar"); return; }
+      console.log(data);
+      setBlog(data.blog);   
+    } catch {
+      setError("Failed to fix grammar.");
+    } finally {
+      setFixingGrammar(false);
+    }
+  };
+
   const handleDeleteBlog = async(e)=>{
     e.preventDefault();
     try {
@@ -136,10 +194,39 @@ export default function BlogDetail() {
             <span className="meta-name">{blog.createdBy?.fullName}</span>
             <span className="meta-dot">·</span>
             <span className="meta-date">{formatDate(blog.createdAt)}</span>
-            <div className="delete-blog">
-              <button className="delete-blog-button" onClick={handleDeleteBlog}>delete</button>
-            </div>
+            {user && blog.createdBy?._id === user._id && (
+              <div className="delete-blog">
+                <button className="delete-blog-button" onClick={handleDeleteBlog}>delete</button>
+              </div>
+            )}
           </div>
+
+          {/* Action buttons */}
+          <div className="blog-actions">
+            <button className={`like-btn ${liked ? "liked" : ""}`} onClick={handleLike}>
+              {liked ? "♥" : "♡"} {likesCount}
+            </button>
+            <button className="ai-btn" onClick={handleSummarize} disabled={summarizing}>
+              {summarizing ? "Summarizing…" : "Summarize"}
+            </button>
+            {user && blog.createdBy?._id === user._id && (
+              <button className="ai-btn" onClick={handleGrammarFix} disabled={fixingGrammar}>
+                {fixingGrammar ? "Fixing…" : "Fix Grammar"}
+              </button>
+            )}
+            {user && blog.createdBy?._id === user._id && (
+              <button className="edit-btn" onClick={() => navigate(`/blog/edit/${id}`)}>
+                Edit
+              </button>
+            )}
+          </div>
+
+          {summary && (
+            <div className="ai-summary-box">
+              <strong>Summary:</strong>
+              <p>{summary}</p>
+            </div>
+          )}
         </div>
 
         {/* Body */}
@@ -176,7 +263,7 @@ export default function BlogDetail() {
             )}
             {comments.map((c) => (
               <div key={c._id} className="comment">
-                <Avatar name={c.createdBy?.fullName} url={c.createdBy?.profileImageURL} />
+                <Avatar name={c.createdBy?.fullName} url={`${BASE_URL}${c.createdBy?.profileImageURL}`} />
                 <div className="comment-content">
                   <span className="comment-author">{c.createdBy?.fullName}</span>
                   <p className="comment-text">{c.content}</p>

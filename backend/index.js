@@ -11,6 +11,11 @@ const { attachUser } = require("./middlewares/authenticate");
 const authRoutes = require("./routes/authRoutes");
 const blogRoutes = require("./routes/blogRoutes");
 const commentRoutes = require("./routes/commentRoutes");
+const userRoutes = require("./routes/userRoutes");
+const aiRoutes = require("./routes/Airoutes");
+
+
+
 
 const app = express();
 const PORT = process.env.PORT || 8000;
@@ -51,6 +56,8 @@ app.use(attachUser);
 app.use("/api/auth", authRoutes);
 app.use("/api/blogs", blogRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/ai", aiRoutes);
 
 // Global error handler 
 app.use((err, req, res, next) => {

@@ -23,6 +23,7 @@ export default function Navbar() {
         {user ? (
           <>
             <Link to="/blog/add-new">Write</Link>
+            <Link to="/dashboard">Dashboard</Link>
             <span className="nav-user">{user.fullName?.split(" ")[0]}</span>
             <button className="nav-logout" onClick={handleLogout}>Logout</button>
           </>

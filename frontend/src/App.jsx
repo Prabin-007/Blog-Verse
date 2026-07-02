@@ -5,6 +5,8 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import BlogDetail from "./pages/BlogDetail";
 import AddBlog from "./pages/AddBlog";
+import Dashboard from "./pages/Dashboard";
+import EditBlog from "./pages/EditBlog";
 import "./index.css";
 
 export default function App() {
@@ -17,6 +19,8 @@ export default function App() {
           <Route path="/signup"       element={<SignUp />} />
           <Route path="/blog/:id"     element={<BlogDetail />} />
           <Route path="/blog/add-new" element={<AddBlog />} />
+          <Route path="/dashboard"    element={<Dashboard />} />
+          <Route path="/blog/edit/:id" element={<EditBlog />} />
         </Routes>
       
     </AuthProvider>
