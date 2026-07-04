@@ -1,7 +1,6 @@
 import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { BASE_URL } from "../utils/axios";
 import Navbar from "../components/Navbar";
 import "./BlogDetail.css";
 
@@ -181,7 +180,7 @@ export default function BlogDetail() {
         {/* Cover image */}
         {blog.coverImageURL && (
           <div className="blog-cover-wrap">
-            <img src={`${BASE_URL}${blog.coverImageURL}`} alt={blog.title} className="blog-cover" />
+            <img src={blog.coverImageURL} alt={blog.title} className="blog-cover" />
           </div>
         )}
 
@@ -189,7 +188,7 @@ export default function BlogDetail() {
         <div className="blog-header">
           <h1 className="blog-title">{blog.title}</h1>
           <div className="blog-meta">
-            <Avatar name={blog.createdBy?.fullName} url={`${BASE_URL}${blog.createdBy?.profileImageURL}`} />
+            <Avatar name={blog.createdBy?.fullName} url={blog.createdBy?.profileImageURL} />
             
             <span className="meta-name">{blog.createdBy?.fullName}</span>
             <span className="meta-dot">·</span>
@@ -263,7 +262,7 @@ export default function BlogDetail() {
             )}
             {comments.map((c) => (
               <div key={c._id} className="comment">
-                <Avatar name={c.createdBy?.fullName} url={`${BASE_URL}${c.createdBy?.profileImageURL}`} />
+                <Avatar name={c.createdBy?.fullName} url={c.createdBy?.profileImageURL} />
                 <div className="comment-content">
                   <span className="comment-author">{c.createdBy?.fullName}</span>
                   <p className="comment-text">{c.content}</p>

@@ -31,7 +31,7 @@ const createBlog = async (req, res) => {
     title,
     body,
     createdBy: req.user._id,
-    coverImageURL: req.file ? `/uploads/${req.file.filename}` : null,
+    coverImageURL: req.file ? req.file.path : null,
   });
   return res.status(201).json({ message: "Blog created", blog });
 };

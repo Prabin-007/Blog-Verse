@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import api from "../utils/axios";
 import Navbar from "../components/Navbar";
-import { BASE_URL } from "../utils/axios";
+
 import "./Home.css";
 
 async function getBlogs() {
@@ -15,7 +15,7 @@ const formatDate = (iso) =>
 
 const Avatar = ({ name, url }) => {
   
-  if (url) return <img src={`${BASE_URL}${url}`} alt={name} className="avatar-img" />;
+  if (url) return <img src={`{url}`} alt={name} className="avatar-img" />;
   const initials = (name || "?").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   return <span className="avatar-initials">{initials}</span>;
 };
@@ -51,7 +51,7 @@ export default function HomePage() {
                 <article key={blog._id} className="card">
                   <div className="card-image-wrap">
                     {blog.coverImageURL && (
-                      <img src={`${BASE_URL}${blog.coverImageURL}`} alt={`${BASE_URL}${blog.coverImageURL}`} className="card-img" />
+                      <img src={blog.coverImageURL} alt={blog.coverImageURL} className="card-img" />
                     )}
                   </div>
                   <div className="card-body">

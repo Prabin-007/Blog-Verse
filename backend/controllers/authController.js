@@ -9,7 +9,7 @@ const signup = async (req, res) => {
   if (exists) return res.status(409).json({ error: "Email already registered" });
 
   const user = await User.create({ fullName, email, password,
-    profileImageURL: req.file ? `/images/${req.file.filename}` : null,}
+    profileImageURL: req.file ? `${req.file.filename}` : null,}
   );
   return res.status(201).json({ message: "Account created", userId: user._id });
 };

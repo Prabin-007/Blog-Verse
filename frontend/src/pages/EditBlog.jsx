@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
-import { BASE_URL } from "../utils/axios";
+
 import "./AddBlog.css";
 
 export default function EditBlog() {
@@ -73,7 +73,7 @@ export default function EditBlog() {
           <div className="field">
             <label htmlFor="coverImage">Cover Image</label>
             {existingCover && !coverImage && (
-              <img src={`${BASE_URL}${existingCover}`} alt="current cover" className="edit-current-cover" />
+              <img src={existingCover} alt="current cover" className="edit-current-cover" />
             )}
             <input
               type="file"

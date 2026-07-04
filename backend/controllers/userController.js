@@ -30,7 +30,7 @@ const updateMyBlog = async (req, res) => {
   const { title, body } = req.body;
   if (title) blog.title = title;
   if (body) blog.body = body;
-  if (req.file) blog.coverImageURL = `/uploads/${req.file.filename}`;
+  if (req.file) blog.coverImageURL= req.file ? req.file.path : null;
 
   await blog.save();
   return res.json({ message: "Blog updated", blog });

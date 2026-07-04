@@ -1,7 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
-import { BASE_URL } from "../utils/axios";
+
 import Navbar from "../components/Navbar";
 import "./Dashboard.css";
 
@@ -89,7 +89,7 @@ export default function Dashboard() {
                 {blogs.map((blog) => (
                   <div key={blog._id} className="dash-item">
                     {blog.coverImageURL && (
-                      <img src={`${BASE_URL}${blog.coverImageURL}`} alt="" className="dash-thumb" />
+                      <img src={blog.coverImageURL} alt="" className="dash-thumb" />
                     )}
                     <div className="dash-item-body">
                       <Link to={`/blog/${blog._id}`} className="dash-item-title">{blog.title}</Link>
@@ -126,7 +126,7 @@ export default function Dashboard() {
                 {liked.map((blog) => (
                   <div key={blog._id} className="dash-item">
                     {blog.coverImageURL && (
-                      <img src={`${BASE_URL}${blog.coverImageURL}`} alt="" className="dash-thumb" />
+                      <img src={blog.coverImageURL} alt="" className="dash-thumb" />
                     )}
                     <div className="dash-item-body">
                       <Link to={`/blog/${blog._id}`} className="dash-item-title">{blog.title}</Link>
