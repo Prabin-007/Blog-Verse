@@ -15,7 +15,7 @@ const formatDate = (iso) =>
 
 const Avatar = ({ name, url }) => {
   
-  if (url) return <img src={`{url}`} alt={name} className="avatar-img" />;
+  if (url) return <img src={url} alt={name} className="avatar-img" />;
   const initials = (name || "?").split(" ").map((n) => n[0]).join("").toUpperCase().slice(0, 2);
   return <span className="avatar-initials">{initials}</span>;
 };

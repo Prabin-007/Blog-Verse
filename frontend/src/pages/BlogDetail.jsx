@@ -34,7 +34,6 @@ export default function BlogDetail() {
       const res = await fetch(`/api/blogs/${id}`, {
         credentials: "include",
       });
-
       const data = await res.json();
 
       if (!res.ok) {
@@ -193,7 +192,7 @@ export default function BlogDetail() {
             <span className="meta-name">{blog.createdBy?.fullName}</span>
             <span className="meta-dot">·</span>
             <span className="meta-date">{formatDate(blog.createdAt)}</span>
-            {user && blog.createdBy?._id === user._id && (
+            {user && (blog.createdBy?._id === user._id || user.role?.toString()==="ADMIN") && (
               <div className="delete-blog">
                 <button className="delete-blog-button" onClick={handleDeleteBlog}>delete</button>
               </div>

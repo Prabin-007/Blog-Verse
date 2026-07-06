@@ -30,10 +30,11 @@ export default function SignUp() {
         body: fd,
       });
       const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
-      navigate(`/blog/${data.blog._id}`);
+      if (!res.ok) {throw data.error;}
+      navigate(`/signin`);
+
     } catch {
-      setError("Something went wrong. Try again.");
+      setError(error);
     } finally {
       setLoading(false);
     }

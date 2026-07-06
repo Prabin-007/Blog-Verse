@@ -1,17 +1,33 @@
 const User = require("../models/User");
 
 const signup = async (req, res) => {
-  const { fullName, email, password,profileImageURL } = req.body;
-  if (!fullName || !email || !password)
-    return res.status(400).json({ error: "All fields are required" });
+  try {
+    const { fullName, email, password } = req.body;
 
-  const exists = await User.findOne({ email });
-  if (exists) return res.status(409).json({ error: "Email already registered" });
+    if (!fullName || !email || !password) {
+      return res.status(400).json({ error: "All fields are required" });
+    }
 
-  const user = await User.create({ fullName, email, password,
-    profileImageURL: req.file ? `${req.file.filename}` : null,}
-  );
-  return res.status(201).json({ message: "Account created", userId: user._id });
+    const exists = await User.findOne({ email });
+    if (exists) {
+      return res.status(409).json({ error: "Email already registered" });
+    }
+
+    const user = await User.create({
+      fullName,
+      email,
+      password,
+      profileImageURL: req.file ? req.file.path : null,
+    });
+
+    return res.status(201).json({
+      message: "Account created",
+      userId: user._id,
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
 };
 
 const signin = async (req, res) => {
