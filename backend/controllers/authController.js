@@ -37,12 +37,16 @@ const signin = async (req, res) => {
 
   const token = await User.matchPasswordAndGenerateToken(email, password);
   return res
-    .cookie("token", token, { httpOnly: true ,sameSite:"lax"})
+    .cookie("token", token, { httpOnly: true ,sameSite:"none",secure: true,})
     .json({ message: "Signed in successfully" });
 };
 
 const logout = (req, res) => {
-  return res.clearCookie("token").json({ message: "Logged out" });
+    res.clearCookie("token", {
+    httpOnly: true,
+    sameSite: "none",
+    secure: true,
+  }).json({ message: "Logged out" });
 };
 
 const me = (req, res) => {
