@@ -22,9 +22,13 @@ const PORT = process.env.PORT || 8000;
 
 
 app.use(cors({
-  origin: "http://localhost:5173",   // React dev server
-  credentials: true,                 // allow cookies cross-origin
+  origin: [
+    "http://localhost:5173",
+    "https://blog-verse-pink.vercel.app",
+  ],
+  credentials: true,
 }));
+
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
 }));
