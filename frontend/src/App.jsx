@@ -1,6 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import HomePage from "./pages/HomePage";
+import HomePage from "./pages/Homepage";
 import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import BlogDetail from "./pages/BlogDetail";
