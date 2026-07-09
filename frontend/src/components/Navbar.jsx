@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
+import api from "../utils/axios";
 import "./Navbar.css";
 
 export default function Navbar() {
@@ -8,7 +9,7 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = async () => {
-    await fetch("/api/auth/logout", { credentials: "include" });
+    await api.get("/auth/logout");
     setUser(null);
     navigate("/");
   };

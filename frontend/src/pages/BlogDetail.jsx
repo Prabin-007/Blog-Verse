@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 import "./BlogDetail.css";
 
 const Avatar = ({ name, url }) => {
@@ -31,22 +32,14 @@ export default function BlogDetail() {
   useEffect(() => {
   async function fetchBlog() {
     try {
-      const res = await fetch(`/api/blogs/${id}`, {
-        credentials: "include",
-      });
-      const data = await res.json();
-
-      if (!res.ok) {
-        throw (data.error);
-      }
+      const { data } = await api.get(`/blogs/${id}`);
 
       setBlog(data.blog);
       setComments(data.comments);
       setLikesCount(data.blog.likes?.length || 0);
       if (user) setLiked(data.blog.likes?.some((uid) => uid === user._id) || false);
-    } catch (error) {
-      console.log('fetchblog wala error',error);
-      setError(error);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to load blog.");
     } finally {
       setLoading(false);
     }
@@ -60,23 +53,12 @@ export default function BlogDetail() {
     if (!content.trim()) return;
     setSubmitting(true);
     try {
-      const res = await fetch(`/api/comments/${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ content }),
-      });
-      
-      if (!res.ok) {
-        setError(data.error || "Something went wrong");
-        return;
-      }
-      const data = await res.json();
+      const { data } = await api.post(`/comments/${id}`, { content });
 
       setComments((prev) => [data.comment, ...prev]);
       setContent("");
-    } catch {
-      setError("Failed to post comment.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to post comment.");
     } finally {
       setSubmitting(false);
     }
@@ -84,12 +66,7 @@ export default function BlogDetail() {
   const handleLike = async () => {
     if (!user) { navigate("/signin"); return; }
     try {
-      const res = await fetch(`/api/blogs/${id}/like`, {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) return;
+      const { data } = await api.post(`/blogs/${id}/like`);
       setLiked(data.liked);
       setLikesCount(data.likesCount);
     } catch {
@@ -100,15 +77,10 @@ export default function BlogDetail() {
   const handleSummarize = async () => {
     setSummarizing(true);
     try {
-      const res = await fetch(`/api/ai/summarize/${id}`, {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error || "Failed to summarize"); return; }
+      const { data } = await api.post(`/ai/summarize/${id}`);
       setSummary(data.summary);
-    } catch {
-      setError("Failed to summarize blog.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to summarize blog.");
     } finally {
       setSummarizing(false);
     }
@@ -117,16 +89,10 @@ export default function BlogDetail() {
   const handleGrammarFix = async () => {
     setFixingGrammar(true);
     try {
-      const res = await fetch(`/api/ai/grammar-fix/${id}`, {
-        method: "POST",
-        credentials: "include",
-      });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error || "Failed to fix grammar"); return; }
-      console.log(data);
-      setBlog(data.blog);   
-    } catch {
-      setError("Failed to fix grammar.");
+      const { data } = await api.post(`/ai/grammar-fix/${id}`);
+      setBlog(data.blog);
+    } catch (err) {
+      setError(err.response?.data?.error || "Failed to fix grammar.");
     } finally {
       setFixingGrammar(false);
     }
@@ -135,18 +101,11 @@ export default function BlogDetail() {
   const handleDeleteBlog = async(e)=>{
     e.preventDefault();
     try {
-      const res = await fetch(`/api/blogs/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-
-      if (!res.ok) {
-        throw (error);
-      }
+      await api.delete(`/blogs/${id}`);
       navigate("/");
     }
-    catch(error) {
-      setError(error||"Failed to delete post.");
+    catch(err) {
+      setError(err.response?.data?.error || "Failed to delete post.");
     } finally {
       setSubmitting(false);
     }

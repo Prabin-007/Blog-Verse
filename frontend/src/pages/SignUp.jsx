@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 import "./Auth.css";
 
 export default function SignUp() {
@@ -24,17 +25,11 @@ export default function SignUp() {
       fd.append("password", form.password);
       if (profileImage) fd.append("profileImage", profileImage);
 
-      const res = await fetch("/api/auth/signup", {
-        method: "POST",
-        credentials: "include",
-        body: fd,
-      });
-      const data = await res.json();
-      if (!res.ok) {throw data.error;}
+      await api.post("/auth/signup", fd);
       navigate(`/signin`);
 
-    } catch {
-      setError(error);
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong. Try again.");
     } finally {
       setLoading(false);
     }

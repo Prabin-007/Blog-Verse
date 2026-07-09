@@ -2,6 +2,7 @@ import { useState, useContext } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 import "./Auth.css";
 
 export default function SignIn() {
@@ -19,22 +20,14 @@ export default function SignIn() {
     setError("");
     setLoading(true);
     try {
-      const res = await fetch("/api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(form),
-      });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
+      await api.post("/auth/signin", form);
 
       // Fetch user info and store in context
-      const me = await fetch("/api/auth/me", { credentials: "include" });
-      const meData = await me.json();
-      setUser(meData.user);
+      const me = await api.get("/auth/me");
+      setUser(me.data.user);
       navigate("/");
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong. Try again.");
     } finally {
       setLoading(false);
     }

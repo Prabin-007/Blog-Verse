@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 import "./AddBlog.css";
 
 export default function AddBlog() {
@@ -24,16 +25,10 @@ export default function AddBlog() {
       fd.append("body", form.body);
       if (coverImage) fd.append("coverImage", coverImage);
 
-      const res = await fetch("/api/blogs", {
-        method: "POST",
-        credentials: "include",
-        body: fd,
-      });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
+      const { data } = await api.post("/blogs", fd);
       navigate(`/blog/${data.blog._id}`);
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong. Try again.");
     } finally {
       setLoading(false);
     }

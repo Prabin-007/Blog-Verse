@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 
 import "./AddBlog.css";
 
@@ -15,11 +16,10 @@ export default function EditBlog() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
-    fetch(`/api/blogs/${id}`, { credentials: "include" })
-      .then((r) => r.json())
-      .then((data) => {
-        setForm({ title: data.blog.title, body: data.blog.body });
-        setExistingCover(data.blog.coverImageURL);
+    api.get(`/blogs/${id}`)
+      .then((res) => {
+        setForm({ title: res.data.blog.title, body: res.data.blog.body });
+        setExistingCover(res.data.blog.coverImageURL);
       })
       .catch(() => setError("Failed to load blog."))
       .finally(() => setLoading(false));
@@ -39,16 +39,10 @@ export default function EditBlog() {
       fd.append("body", form.body);
       if (coverImage) fd.append("coverImage", coverImage);
 
-      const res = await fetch(`/api/users/me/blogs/${id}`, {
-        method: "PUT",
-        credentials: "include",
-        body: fd,
-      });
-      const data = await res.json();
-      if (!res.ok) { setError(data.error); return; }
+      await api.put(`/users/me/blogs/${id}`, fd);
       navigate(`/blog/${id}`);
-    } catch {
-      setError("Something went wrong. Try again.");
+    } catch (err) {
+      setError(err.response?.data?.error || "Something went wrong. Try again.");
     } finally {
       setSaving(false);
     }

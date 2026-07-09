@@ -1,4 +1,5 @@
 import { createContext, useState, useEffect } from "react";
+import api from "../utils/axios";
 
 export const AuthContext = createContext(null);
 
@@ -8,9 +9,8 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     // Check if already logged in on page load
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((r) => r.json())
-      .then((data) => setUser(data.user || null))
+    api.get("/auth/me")
+      .then((res) => setUser(res.data.user || null))
       .catch(() => setUser(null))
       .finally(() => setLoading(false));
   }, []);

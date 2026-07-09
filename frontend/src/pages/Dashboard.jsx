@@ -3,6 +3,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 
 import Navbar from "../components/Navbar";
+import api from "../utils/axios";
 import "./Dashboard.css";
 
 const TABS = ["My Blogs", "My Comments", "Liked Posts"];
@@ -28,16 +29,13 @@ export default function Dashboard() {
     setError("");
     try {
       if (which === "My Blogs") {
-        const res = await fetch("/api/users/me/blogs", { credentials: "include" });
-        const data = await res.json();
+        const { data } = await api.get("/users/me/blogs");
         setBlogs(data.blogs || []);
       } else if (which === "My Comments") {
-        const res = await fetch("/api/users/me/comments", { credentials: "include" });
-        const data = await res.json();
+        const { data } = await api.get("/users/me/comments");
         setComments(data.comments || []);
       } else {
-        const res = await fetch("/api/users/me/liked", { credentials: "include" });
-        const data = await res.json();
+        const { data } = await api.get("/users/me/liked");
         setLiked(data.blogs || []);
       }
     } catch {
@@ -50,8 +48,8 @@ export default function Dashboard() {
   const handleDelete = async (blogId) => {
     if (!confirm("Delete this blog?")) return;
     try {
-      const res = await fetch(`/api/blogs/${blogId}`, { method: "DELETE", credentials: "include" });
-      if (res.ok) setBlogs((prev) => prev.filter((b) => b._id !== blogId));
+      await api.delete(`/blogs/${blogId}`);
+      setBlogs((prev) => prev.filter((b) => b._id !== blogId));
     } catch {
       setError("Failed to delete blog.");
     }
